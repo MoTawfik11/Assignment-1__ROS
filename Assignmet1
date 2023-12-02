@@ -1,0 +1,53 @@
+#include "ros/ros.h"
+#include "std_msgs/Int32.h"
+
+int main(int argc, char **argv)
+{
+    // Initialize the ROS node
+    ros::init(argc, argv, "number_publisher");
+    ros::NodeHandle nh;
+
+    // Create a publisher for publishing integer numbers on the "number_topic" topic
+    ros::Publisher number_publisher = nh.advertise<std_msgs::Int32>("number_topic", 10);
+
+    // Set the loop rate (in Hz)
+    ros::Rate loop_rate(1); // 1 Hz
+
+    int number = 20;
+
+    while (ros::ok() && number <= 100)
+    {
+        // Create a message and set the data
+        std_msgs::Int32 msg;
+        msg.data = number;
+
+        // Publish the message
+        number_publisher.publish(msg);
+
+        // Log the published number
+        ROS_INFO("Published: %d", msg.data);
+
+        // Increment the number
+        ++number;
+
+        // Spin once to handle callbacks
+        ros::spinOnce();
+
+        // Sleep to maintain the loop rate
+        loop_rate.sleep();
+    }
+
+    // Shutdown the ROS node
+    ros::shutdown();
+
+    return 0;
+}
+
+
+
+//****************************************************************************
+
+CMake_List
+
+add_executable(number_publisher src/number_publisher.cpp)
+target_link_libraries(number_publisher ${catkin_LIBRARIES})
